@@ -57,7 +57,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "kontakt@wyniesiemyto.pl", // You'll need to configure your domain
+        from: "WyniesiemyTo <onboarding@resend.dev>", // Default Resend sender for testing
         to: ["wyniesiemyto@gmail.com"], // Replace with your actual email
         subject: `Nowe zapytanie od ${name}`,
         html: `
