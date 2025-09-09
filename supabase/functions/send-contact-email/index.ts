@@ -58,7 +58,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "kontakt@wyniesiemyto.pl", // You'll need to configure your domain
-        to: ["kacper@wyniesiemyto.pl"], // Replace with your actual email
+        to: ["wyniesiemyto@gmail.com"], // Replace with your actual email
         subject: `Nowe zapytanie od ${name}`,
         html: `
           <h2>Nowe zapytanie z formularza kontaktowego</h2>
