@@ -11,6 +11,7 @@ interface ContactFormData {
   name: string;
   phone: string;
   message: string;
+  needsWasteCollection: boolean;
 }
 
 serve(async (req) => {
@@ -20,7 +21,7 @@ serve(async (req) => {
   }
 
   try {
-    const { name, phone, message }: ContactFormData = await req.json();
+    const { name, phone, message, needsWasteCollection }: ContactFormData = await req.json();
 
     // Validate required fields
     if (!name || !phone || !message) {
@@ -35,7 +36,7 @@ serve(async (req) => {
 
     // If RESEND_API_KEY is not set, we'll simulate success for now
     if (!RESEND_API_KEY) {
-      console.log("Email would be sent:", { name, phone, message });
+      console.log("Email would be sent:", { name, phone, message, needsWasteCollection });
       
       return new Response(
         JSON.stringify({ 
@@ -64,6 +65,7 @@ serve(async (req) => {
           <h2>Nowe zapytanie z formularza kontaktowego</h2>
           <p><strong>Imię i nazwisko:</strong> ${name}</p>
           <p><strong>Telefon:</strong> ${phone}</p>
+          <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection ? 'Tak' : 'Nie'}</p>
           <p><strong>Wiadomość:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
           <hr>

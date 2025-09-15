@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, CheckCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -12,11 +13,36 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    message: ''
+    message: '',
+    needsWasteCollection: false
   });
+  
+  // Captcha state
+  const [captcha, setCaptcha] = useState({ question: '', answer: 0 });
+  const [captchaInput, setCaptchaInput] = useState('');
+
+  // Generate new captcha
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    setCaptcha({
+      question: `${num1} + ${num2} = ?`,
+      answer: num1 + num2
+    });
+  };
+
+  useEffect(() => {
+    generateCaptcha();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate captcha
+    if (parseInt(captchaInput) !== captcha.answer) {
+      setSubmitStatus('error');
+      return;
+    }
     
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -27,6 +53,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           name: formData.name,
           phone: formData.phone,
           message: formData.message,
+          needsWasteCollection: formData.needsWasteCollection,
         },
       });
 
@@ -35,7 +62,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-        setFormData({ name: '', phone: '', message: '' });
+        setFormData({ name: '', phone: '', message: '', needsWasteCollection: false });
+        setCaptchaInput('');
+        generateCaptcha();
         onSubmitSuccess?.();
       }
     } catch (error) {
@@ -107,6 +136,40 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
             placeholder="Opisz czego potrzebujesz..."
           />
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <Checkbox 
+            id="wasteCollection"
+            checked={formData.needsWasteCollection}
+            onCheckedChange={(checked) => setFormData({ ...formData, needsWasteCollection: !!checked })}
+          />
+          <label 
+            htmlFor="wasteCollection" 
+            className="text-sm font-medium text-gray-700 cursor-pointer"
+          >
+            Czy potrzebujesz wywozu do Punktu Selektywnej Zbiórki Odpadów Komunalnych?
+          </label>
+        </div>
+
+        <div>
+          <label htmlFor="captcha" className="block text-sm font-medium text-gray-700 mb-2">
+            Weryfikacja *
+          </label>
+          <div className="flex items-center gap-4">
+            <span className="text-lg font-mono bg-gray-100 px-3 py-2 rounded border">
+              {captcha.question}
+            </span>
+            <input
+              type="number"
+              id="captcha"
+              required
+              value={captchaInput}
+              onChange={(e) => setCaptchaInput(e.target.value)}
+              className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
+              placeholder="?"
+            />
+          </div>
         </div>
         
         <button
