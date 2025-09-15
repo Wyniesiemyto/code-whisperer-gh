@@ -12,6 +12,7 @@ declare global {
         'expired-callback': () => void;
       }) => void;
       reset: () => void;
+      ready: (callback: () => void) => void;
     };
   }
 }
@@ -37,17 +38,37 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'; // This is a test key
 
   useEffect(() => {
-    // Load reCAPTCHA
-    if (window.grecaptcha && recaptchaRef.current) {
-      window.grecaptcha.render(recaptchaRef.current, {
-        sitekey: RECAPTCHA_SITE_KEY,
-        callback: (token: string) => {
-          setRecaptchaToken(token);
-        },
-        'expired-callback': () => {
-          setRecaptchaToken(null);
+    // Wait for reCAPTCHA to be ready
+    const initializeRecaptcha = () => {
+      if (window.grecaptcha && window.grecaptcha.render && recaptchaRef.current) {
+        try {
+          window.grecaptcha.render(recaptchaRef.current, {
+            sitekey: RECAPTCHA_SITE_KEY,
+            callback: (token: string) => {
+              setRecaptchaToken(token);
+            },
+            'expired-callback': () => {
+              setRecaptchaToken(null);
+            }
+          });
+        } catch (error) {
+          console.error('reCAPTCHA render error:', error);
         }
-      });
+      }
+    };
+
+    if (window.grecaptcha && window.grecaptcha.ready) {
+      window.grecaptcha.ready(initializeRecaptcha);
+    } else {
+      // Fallback: check if grecaptcha is loaded after a short delay
+      const checkRecaptcha = () => {
+        if (window.grecaptcha && window.grecaptcha.ready) {
+          window.grecaptcha.ready(initializeRecaptcha);
+        } else {
+          setTimeout(checkRecaptcha, 100);
+        }
+      };
+      checkRecaptcha();
     }
   }, []);
 
