@@ -1,7 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, CheckCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { Checkbox } from '@/components/ui/checkbox';
+
+// Declare reCAPTCHA types
+declare global {
+  interface Window {
+    grecaptcha: {
+      render: (container: Element, parameters: {
+        sitekey: string;
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+      }) => void;
+      reset: () => void;
+    };
+  }
+}
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -14,32 +27,35 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     name: '',
     phone: '',
     message: '',
-    needsWasteCollection: false
+    needsWasteCollection: ''
   });
   
-  // Captcha state
-  const [captcha, setCaptcha] = useState({ question: '', answer: 0 });
-  const [captchaInput, setCaptchaInput] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<HTMLDivElement>(null);
 
-  // Generate new captcha
-  const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    setCaptcha({
-      question: `${num1} + ${num2} = ?`,
-      answer: num1 + num2
-    });
-  };
+  // reCAPTCHA site key - replace with your actual site key
+  const RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'; // This is a test key
 
   useEffect(() => {
-    generateCaptcha();
+    // Load reCAPTCHA
+    if (window.grecaptcha && recaptchaRef.current) {
+      window.grecaptcha.render(recaptchaRef.current, {
+        sitekey: RECAPTCHA_SITE_KEY,
+        callback: (token: string) => {
+          setRecaptchaToken(token);
+        },
+        'expired-callback': () => {
+          setRecaptchaToken(null);
+        }
+      });
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate captcha
-    if (parseInt(captchaInput) !== captcha.answer) {
+    // Validate reCAPTCHA
+    if (!recaptchaToken) {
       setSubmitStatus('error');
       return;
     }
@@ -54,6 +70,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           phone: formData.phone,
           message: formData.message,
           needsWasteCollection: formData.needsWasteCollection,
+          recaptchaToken: recaptchaToken,
         },
       });
 
@@ -62,9 +79,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-        setFormData({ name: '', phone: '', message: '', needsWasteCollection: false });
-        setCaptchaInput('');
-        generateCaptcha();
+        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
+        setRecaptchaToken(null);
+        // Reset reCAPTCHA
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
         onSubmitSuccess?.();
       }
     } catch (error) {
@@ -138,38 +158,46 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           />
         </div>
         
-        <div className="flex items-center space-x-3">
-          <Checkbox 
-            id="wasteCollection"
-            checked={formData.needsWasteCollection}
-            onCheckedChange={(checked) => setFormData({ ...formData, needsWasteCollection: !!checked })}
-          />
-          <label 
-            htmlFor="wasteCollection" 
-            className="text-sm font-medium text-gray-700 cursor-pointer"
-          >
-            Czy potrzebujesz wywozu do Punktu Selektywnej Zbiórki Odpadów Komunalnych?
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Czy potrzebujesz wywozu do Punktu Selektywnej Zbiórki Odpadów Komunalnych? *
           </label>
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="wasteCollection"
+                value="tak"
+                checked={formData.needsWasteCollection === 'tak'}
+                onChange={(e) => setFormData({ ...formData, needsWasteCollection: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">Tak</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="wasteCollection"
+                value="nie"
+                checked={formData.needsWasteCollection === 'nie'}
+                onChange={(e) => setFormData({ ...formData, needsWasteCollection: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">Nie</span>
+            </label>
+          </div>
         </div>
 
         <div>
-          <label htmlFor="captcha" className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Weryfikacja *
           </label>
-          <div className="flex items-center gap-4">
-            <span className="text-lg font-mono bg-gray-100 px-3 py-2 rounded border">
-              {captcha.question}
-            </span>
-            <input
-              type="number"
-              id="captcha"
-              required
-              value={captchaInput}
-              onChange={(e) => setCaptchaInput(e.target.value)}
-              className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-200"
-              placeholder="?"
-            />
-          </div>
+          <div ref={recaptchaRef}></div>
+          {!recaptchaToken && (
+            <p className="text-red-600 text-sm mt-1">Proszę potwierdzić, że nie jesteś robotem</p>
+          )}
         </div>
         
         <button
