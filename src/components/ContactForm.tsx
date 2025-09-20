@@ -34,8 +34,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const recaptchaRef = useRef<HTMLDivElement>(null);
 
-  // reCAPTCHA site key - replace with your actual site key from Google reCAPTCHA console
-  const RECAPTCHA_SITE_KEY = 'YOUR_ACTUAL_RECAPTCHA_SITE_KEY_HERE'; // Replace this with your real site key
+  // reCAPTCHA site key
+  const RECAPTCHA_SITE_KEY = '6LceusorAAAAAEJsv6s4uTVSXmBj-XnpTMRfr8qP';
 
   useEffect(() => {
     // Wait for reCAPTCHA to be ready
