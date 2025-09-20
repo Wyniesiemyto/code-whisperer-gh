@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, CheckCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -13,7 +13,6 @@ declare global {
       }) => void;
       reset: () => void;
       ready: (callback: () => void) => void;
-      execute: (sitekey: string, options: { action: string }) => Promise<string>;
     };
   }
 }
@@ -31,24 +30,40 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     message: '',
     needsWasteCollection: ''
   });
+  
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<HTMLDivElement>(null);
 
   // reCAPTCHA site key
-  const RECAPTCHA_SITE_KEY = '6LceusorAAAAAEJsv6s4uTVSXmBj-XnpTMRfr8qP';
+  const RECAPTCHA_SITE_KEY = '6LeT188rAAAAAMMzi5YhjMAXQBq2r_aAVn9ux0JG';
 
   useEffect(() => {
-    // reCAPTCHA v3 - loads automatically, no widget needed
-    const loadRecaptcha = () => {
-      if (window.grecaptcha && window.grecaptcha.ready) {
-        console.log('reCAPTCHA v3 loaded and ready');
+    // Wait for reCAPTCHA to be ready
+    const initializeRecaptcha = () => {
+      if (window.grecaptcha && window.grecaptcha.render && recaptchaRef.current) {
+        try {
+          window.grecaptcha.render(recaptchaRef.current, {
+            sitekey: RECAPTCHA_SITE_KEY,
+            callback: (token: string) => {
+              setRecaptchaToken(token);
+            },
+            'expired-callback': () => {
+              setRecaptchaToken(null);
+            }
+          });
+        } catch (error) {
+          console.error('reCAPTCHA render error:', error);
+        }
       }
     };
 
     if (window.grecaptcha && window.grecaptcha.ready) {
-      window.grecaptcha.ready(loadRecaptcha);
+      window.grecaptcha.ready(initializeRecaptcha);
     } else {
+      // Fallback: check if grecaptcha is loaded after a short delay
       const checkRecaptcha = () => {
         if (window.grecaptcha && window.grecaptcha.ready) {
-          window.grecaptcha.ready(loadRecaptcha);
+          window.grecaptcha.ready(initializeRecaptcha);
         } else {
           setTimeout(checkRecaptcha, 100);
         }
@@ -60,20 +75,23 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate reCAPTCHA
+    if (!recaptchaToken) {
+      setSubmitStatus('error');
+      return;
+    }
+    
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      // Get reCAPTCHA v3 token
-      const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'contact_form' });
-      
       const { data, error } = await supabase.functions.invoke('send-contact-email', {
         body: {
           name: formData.name,
           phone: formData.phone,
           message: formData.message,
           needsWasteCollection: formData.needsWasteCollection,
-          recaptchaToken: token,
+          recaptchaToken: recaptchaToken,
         },
       });
 
@@ -83,10 +101,15 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
       } else {
         setSubmitStatus('success');
         setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
+        setRecaptchaToken(null);
+        // Reset reCAPTCHA
+        if (window.grecaptcha) {
+          window.grecaptcha.reset();
+        }
         onSubmitSuccess?.();
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Network error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -188,6 +211,16 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           </div>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Weryfikacja *
+          </label>
+          <div ref={recaptchaRef}></div>
+          {!recaptchaToken && (
+            <p className="text-red-600 text-sm mt-1">Proszę potwierdzić, że nie jesteś robotem</p>
+          )}
+        </div>
+        
         <button
           type="submit"
           disabled={isSubmitting}
