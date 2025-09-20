@@ -40,20 +40,35 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
   useEffect(() => {
     // Wait for reCAPTCHA to be ready
     const initializeRecaptcha = () => {
-      if (window.grecaptcha && window.grecaptcha.render && recaptchaRef.current) {
-        try {
-          window.grecaptcha.render(recaptchaRef.current, {
+      const el = recaptchaRef.current;
+      if (!el || !window.grecaptcha) return;
+
+      try {
+        // Prefer Enterprise if available
+        const enterprise = (window.grecaptcha as any).enterprise;
+        if (enterprise && typeof enterprise.render === 'function') {
+          enterprise.render(el, {
             sitekey: RECAPTCHA_SITE_KEY,
-            callback: (token: string) => {
-              setRecaptchaToken(token);
-            },
-            'expired-callback': () => {
-              setRecaptchaToken(null);
-            }
+            callback: (token: string) => setRecaptchaToken(token),
+            'expired-callback': () => setRecaptchaToken(null),
           });
-        } catch (error) {
-          console.error('reCAPTCHA render error:', error);
+          return;
         }
+
+        // Standard v2
+        if (typeof window.grecaptcha.render === 'function') {
+          window.grecaptcha.render(el, {
+            sitekey: RECAPTCHA_SITE_KEY,
+            callback: (token: string) => setRecaptchaToken(token),
+            'expired-callback': () => setRecaptchaToken(null),
+          });
+          return;
+        }
+
+        // Not ready yet - retry shortly
+        setTimeout(initializeRecaptcha, 150);
+      } catch (error) {
+        console.error('reCAPTCHA render error:', error);
       }
     };
 
@@ -102,8 +117,11 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('success');
         setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
         setRecaptchaToken(null);
-        // Reset reCAPTCHA
-        if (window.grecaptcha) {
+        // Reset reCAPTCHA (Enterprise or standard)
+        const enterprise = (window.grecaptcha as any)?.enterprise;
+        if (enterprise && typeof enterprise.reset === 'function') {
+          enterprise.reset();
+        } else if (typeof window.grecaptcha.reset === 'function') {
           window.grecaptcha.reset();
         }
         onSubmitSuccess?.();
