@@ -5,6 +5,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 interface ContactFormData {
@@ -51,10 +52,15 @@ serve(async (req) => {
     });
 
     const recaptchaResult = await recaptchaResponse.json();
+    console.log("reCAPTCHA verify result:", recaptchaResult);
     
     if (!recaptchaResult.success) {
       return new Response(
-        JSON.stringify({ error: "Weryfikacja reCAPTCHA nieudana. Proszę spróbować ponownie." }),
+        JSON.stringify({ 
+          error: "Weryfikacja reCAPTCHA nieudana. Proszę spróbować ponownie.",
+          codes: recaptchaResult["error-codes"] ?? [],
+          result: recaptchaResult,
+        }),
         { 
           status: 400, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }
