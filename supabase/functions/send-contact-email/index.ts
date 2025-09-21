@@ -22,10 +22,16 @@ serve(async (req) => {
   }
 
   try {
-    const { name, phone, message, needsWasteCollection, recaptchaToken }: ContactFormData = await req.json();
+    const body = await req.json();
+    console.log("Received request body:", body);
+    
+    const { name, phone, message, needsWasteCollection, recaptchaToken }: ContactFormData = body;
 
     // Validate required fields
+    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, recaptchaToken: !!recaptchaToken });
+    
     if (!name || !phone || !message || !needsWasteCollection || !recaptchaToken) {
+      console.log("Missing required fields");
       return new Response(
         JSON.stringify({ error: "Wszystkie pola są wymagane" }),
         { 
