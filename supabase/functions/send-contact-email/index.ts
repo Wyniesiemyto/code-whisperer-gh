@@ -13,7 +13,6 @@ interface ContactFormData {
   phone: string;
   message: string;
   needsWasteCollection: string;
-  recaptchaToken: string;
 }
 
 serve(async (req) => {
@@ -26,41 +25,15 @@ serve(async (req) => {
     const body = await req.json();
     console.log("Received request body:", body);
     
-    const { name, phone, message, needsWasteCollection, recaptchaToken }: ContactFormData = body;
+    const { name, phone, message, needsWasteCollection }: ContactFormData = body;
 
     // Validate required fields
-    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, recaptchaToken: !!recaptchaToken });
+    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection });
     
-    if (!name || !phone || !message || !needsWasteCollection || !recaptchaToken) {
+    if (!name || !phone || !message || !needsWasteCollection) {
       console.log("Missing required fields");
       return new Response(
         JSON.stringify({ error: "Wszystkie pola są wymagane" }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-
-    // Verify reCAPTCHA
-    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `secret=${Deno.env.get('RECAPTCHA_SECRET_KEY')}&response=${recaptchaToken}`,
-    });
-
-    const recaptchaResult = await recaptchaResponse.json();
-    console.log("reCAPTCHA verify result:", recaptchaResult);
-    
-    if (!recaptchaResult.success) {
-      return new Response(
-        JSON.stringify({ 
-          error: "Weryfikacja reCAPTCHA nieudana. Proszę spróbować ponownie.",
-          codes: recaptchaResult["error-codes"] ?? [],
-          result: recaptchaResult,
-        }),
         { 
           status: 400, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }

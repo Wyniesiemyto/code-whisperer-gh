@@ -1,21 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Mail, CheckCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-
-// Declare reCAPTCHA types
-declare global {
-  interface Window {
-    grecaptcha: {
-      render: (container: Element, parameters: {
-        sitekey: string;
-        callback: (token: string) => void;
-        'expired-callback': () => void;
-      }) => void;
-      reset: () => void;
-      ready: (callback: () => void) => void;
-    };
-  }
-}
 
 interface ContactFormProps {
   onSubmitSuccess?: () => void;
@@ -30,71 +15,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     message: '',
     needsWasteCollection: ''
   });
-  
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<HTMLDivElement>(null);
-
-  // reCAPTCHA site key
-  const RECAPTCHA_SITE_KEY = '6LeT188rAAAAAMMzi5YhjMAXQBq2r_aAVn9ux0JG';
-
-  useEffect(() => {
-    // Wait for reCAPTCHA to be ready
-    const initializeRecaptcha = () => {
-      const el = recaptchaRef.current;
-      if (!el || !window.grecaptcha) return;
-
-      try {
-        // Prefer Enterprise if available
-        const enterprise = (window.grecaptcha as any).enterprise;
-        if (enterprise && typeof enterprise.render === 'function') {
-          enterprise.render(el, {
-            sitekey: RECAPTCHA_SITE_KEY,
-            callback: (token: string) => setRecaptchaToken(token),
-            'expired-callback': () => setRecaptchaToken(null),
-          });
-          return;
-        }
-
-        // Standard v2
-        if (typeof window.grecaptcha.render === 'function') {
-          window.grecaptcha.render(el, {
-            sitekey: RECAPTCHA_SITE_KEY,
-            callback: (token: string) => setRecaptchaToken(token),
-            'expired-callback': () => setRecaptchaToken(null),
-          });
-          return;
-        }
-
-        // Not ready yet - retry shortly
-        setTimeout(initializeRecaptcha, 150);
-      } catch (error) {
-        console.error('reCAPTCHA render error:', error);
-      }
-    };
-
-    if (window.grecaptcha && window.grecaptcha.ready) {
-      window.grecaptcha.ready(initializeRecaptcha);
-    } else {
-      // Fallback: check if grecaptcha is loaded after a short delay
-      const checkRecaptcha = () => {
-        if (window.grecaptcha && window.grecaptcha.ready) {
-          window.grecaptcha.ready(initializeRecaptcha);
-        } else {
-          setTimeout(checkRecaptcha, 100);
-        }
-      };
-      checkRecaptcha();
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate reCAPTCHA
-    if (!recaptchaToken) {
-      setSubmitStatus('error');
-      return;
-    }
     
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -106,7 +29,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           phone: formData.phone,
           message: formData.message,
           needsWasteCollection: formData.needsWasteCollection,
-          recaptchaToken: recaptchaToken,
         },
       });
 
@@ -116,14 +38,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
       } else {
         setSubmitStatus('success');
         setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
-        setRecaptchaToken(null);
-        // Reset reCAPTCHA (Enterprise or standard)
-        const enterprise = (window.grecaptcha as any)?.enterprise;
-        if (enterprise && typeof enterprise.reset === 'function') {
-          enterprise.reset();
-        } else if (typeof window.grecaptcha.reset === 'function') {
-          window.grecaptcha.reset();
-        }
         onSubmitSuccess?.();
       }
     } catch (error) {
@@ -229,15 +143,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Weryfikacja *
-          </label>
-          <div ref={recaptchaRef}></div>
-          {!recaptchaToken && (
-            <p className="text-red-600 text-sm mt-1">Proszę potwierdzić, że nie jesteś robotem</p>
-          )}
-        </div>
         
         <button
           type="submit"
