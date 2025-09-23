@@ -13,6 +13,7 @@ interface ContactFormData {
   phone: string;
   message: string;
   needsWasteCollection: string;
+  contactHours: string;
 }
 
 serve(async (req) => {
@@ -25,12 +26,12 @@ serve(async (req) => {
     const body = await req.json();
     console.log("Received request body:", body);
     
-    const { name, phone, message, needsWasteCollection }: ContactFormData = body;
+    const { name, phone, message, needsWasteCollection, contactHours }: ContactFormData = body;
 
     // Validate required fields
-    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection });
+    console.log("Validating fields:", { name: !!name, phone: !!phone, message: !!message, needsWasteCollection: !!needsWasteCollection, contactHours: !!contactHours });
     
-    if (!name || !phone || !message || !needsWasteCollection) {
+    if (!name || !phone || !message || !needsWasteCollection || !contactHours) {
       console.log("Missing required fields");
       return new Response(
         JSON.stringify({ error: "Wszystkie pola są wymagane" }),
@@ -73,6 +74,7 @@ serve(async (req) => {
           <p><strong>Imię i nazwisko:</strong> ${name}</p>
           <p><strong>Telefon:</strong> ${phone}</p>
           <p><strong>Wywóz do PSZOK:</strong> ${needsWasteCollection}</p>
+          <p><strong>Godziny kontaktu:</strong> ${contactHours}</p>
           <p><strong>Wiadomość:</strong></p>
           <p>${message.replace(/\n/g, '<br>')}</p>
           <hr>

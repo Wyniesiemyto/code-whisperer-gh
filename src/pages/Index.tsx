@@ -117,7 +117,7 @@ const Index = () => {
             </div>
             
             <div className="text-gray-500 space-y-2">
-              <p>Drugi numer: <a href="tel:884753295" className="text-orange-500 hover:underline font-semibold">884 753 295</a></p>
+              <p>Drugi numer: <a href="tel:535566903" className="text-orange-500 hover:underline font-semibold">535 566 903</a></p>
               <p className="text-sm">Właściciele: Kacper Zagermann / Patryk Sylwerski</p>
             </div>
           </div>
@@ -288,7 +288,7 @@ const Index = () => {
                       <p className="text-gray-600">
                         <a href="tel:531124500" className="hover:text-orange-500">531 124 500</a>
                         <span className="mx-2">•</span>
-                        <a href="tel:884753295" className="hover:text-orange-500">884 753 295</a>
+                        <a href="tel:535566903" className="hover:text-orange-500">535 566 903</a>
                       </p>
                     </div>
                   </div>
@@ -346,9 +346,9 @@ const Index = () => {
                 <Phone className="h-5 w-5" />
                 531 124 500
               </a>
-              <a href="tel:884753295" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
+              <a href="tel:535566903" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
                 <Phone className="h-5 w-5" />
-                884 753 295
+                535 566 903
               </a>
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-orange-500" />

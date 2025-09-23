@@ -13,7 +13,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
     name: '',
     phone: '',
     message: '',
-    needsWasteCollection: ''
+    needsWasteCollection: '',
+    contactHours: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,6 +30,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
           phone: formData.phone,
           message: formData.message,
           needsWasteCollection: formData.needsWasteCollection,
+          contactHours: formData.contactHours,
         },
       });
 
@@ -37,7 +39,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
         setSubmitStatus('error');
       } else {
         setSubmitStatus('success');
-        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '' });
+        setFormData({ name: '', phone: '', message: '', needsWasteCollection: '', contactHours: '' });
         onSubmitSuccess?.();
       }
     } catch (error) {
@@ -139,6 +141,62 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => 
                 required
               />
               <span className="text-sm text-gray-700">Nie</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            W jakich godzinach możemy się z panem/panią skontaktować? *
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactHours"
+                value="8:00-12:00"
+                checked={formData.contactHours === '8:00-12:00'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">8:00 - 12:00</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactHours"
+                value="12:00-16:00"
+                checked={formData.contactHours === '12:00-16:00'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">12:00 - 16:00</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="contactHours"
+                value="16:00-20:00"
+                checked={formData.contactHours === '16:00-20:00'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">16:00 - 20:00</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer sm:col-span-3">
+              <input
+                type="radio"
+                name="contactHours"
+                value="dowolna"
+                checked={formData.contactHours === 'dowolna'}
+                onChange={(e) => setFormData({ ...formData, contactHours: e.target.value })}
+                className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                required
+              />
+              <span className="text-sm text-gray-700">Dowolna pora</span>
             </label>
           </div>
         </div>
