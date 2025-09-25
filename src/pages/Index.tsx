@@ -44,8 +44,8 @@ const Index = () => {
                 <button onClick={() => scrollToSection('why-us')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Dlaczego my</button>
                 <button onClick={() => scrollToSection('reviews')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Opinie</button>
                 <button onClick={() => scrollToSection('contact')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Kontakt</button>
-                <a href="tel:531124500" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
-                  531 124 500
+                <a href="tel:504729105" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
+                  504 729 105
                 </a>
               </div>
             </div>
@@ -71,8 +71,8 @@ const Index = () => {
               <button onClick={() => scrollToSection('why-us')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Dlaczego my</button>
               <button onClick={() => scrollToSection('reviews')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Opinie</button>
               <button onClick={() => scrollToSection('contact')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Kontakt</button>
-              <a href="tel:531124500" className="block bg-orange-500 text-white px-3 py-2 text-base font-medium rounded mx-3 mt-2 text-center">
-                Zadzwoń: 531 124 500
+              <a href="tel:504729105" className="block bg-orange-500 text-white px-3 py-2 text-base font-medium rounded mx-3 mt-2 text-center">
+                Zadzwoń: 504 729 105
               </a>
             </div>
           </div>
@@ -101,11 +101,11 @@ const Index = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <a 
-                href="tel:531124500" 
+                href="tel:504729105" 
                 className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl text-lg transition duration-300 flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
                 <Phone className="h-6 w-6" />
-                Zadzwoń teraz: 531 124 500
+                Zadzwoń teraz: 504 729 105
               </a>
               <button 
                 onClick={() => scrollToSection('contact')}
@@ -117,7 +117,7 @@ const Index = () => {
             </div>
             
             <div className="text-gray-500 space-y-2">
-              <p>Drugi numer: <a href="tel:535566903" className="text-orange-500 hover:underline font-semibold">535 566 903</a></p>
+              <p>Drugi numer: <a href="tel:798598993" className="text-orange-500 hover:underline font-semibold">798 598 993</a></p>
               <p className="text-sm">Właściciele: Kacper Zagermann / Patryk Sylwerski</p>
             </div>
           </div>
@@ -286,9 +286,9 @@ const Index = () => {
                     <div>
                       <p className="font-semibold text-gray-900">Telefony</p>
                       <p className="text-gray-600">
-                        <a href="tel:531124500" className="hover:text-orange-500">531 124 500</a>
+                        <a href="tel:504729105" className="hover:text-orange-500">504 729 105</a>
                         <span className="mx-2">•</span>
-                        <a href="tel:535566903" className="hover:text-orange-500">535 566 903</a>
+                        <a href="tel:798598993" className="hover:text-orange-500">798 598 993</a>
                       </p>
                     </div>
                   </div>
@@ -342,13 +342,13 @@ const Index = () => {
               Profesjonalne usługi transportowe w Żorach i okolicy
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <a href="tel:531124500" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
+              <a href="tel:504729105" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
                 <Phone className="h-5 w-5" />
-                531 124 500
+                504 729 105
               </a>
-              <a href="tel:535566903" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
+              <a href="tel:798598993" className="flex items-center gap-2 hover:text-orange-500 transition duration-200">
                 <Phone className="h-5 w-5" />
-                535 566 903
+                798 598 993
               </a>
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-orange-500" />
