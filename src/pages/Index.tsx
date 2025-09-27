@@ -43,6 +43,7 @@ const Index = () => {
                 <button onClick={() => scrollToSection('services')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Usługi</button>
                 <button onClick={() => scrollToSection('why-us')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Dlaczego my</button>
                 <button onClick={() => scrollToSection('reviews')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Opinie</button>
+                <button onClick={() => scrollToSection('legal')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Informacje prawne</button>
                 <button onClick={() => scrollToSection('contact')} className="hover:text-orange-500 px-3 py-2 text-sm font-medium text-gray-700 transition duration-200">Kontakt</button>
                 <a href="tel:504729105" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
                   504 729 105
@@ -70,6 +71,7 @@ const Index = () => {
               <button onClick={() => scrollToSection('services')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Usługi</button>
               <button onClick={() => scrollToSection('why-us')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Dlaczego my</button>
               <button onClick={() => scrollToSection('reviews')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Opinie</button>
+              <button onClick={() => scrollToSection('legal')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Informacje prawne</button>
               <button onClick={() => scrollToSection('contact')} className="block hover:text-orange-500 hover:bg-orange-50 px-3 py-2 text-base font-medium w-full text-left text-gray-700 rounded">Kontakt</button>
               <a href="tel:504729105" className="block bg-orange-500 text-white px-3 py-2 text-base font-medium rounded mx-3 mt-2 text-center">
                 Zadzwoń: 504 729 105
@@ -259,6 +261,117 @@ const Index = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Legal Compliance Section */}
+      <section id="legal" className="py-20 bg-red-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-red-900 mb-4">Kluczowe braki prawne wymagające natychmiastowej uwagi</h2>
+            <p className="text-xl text-red-700">Informacje o wymogach prawnych dla strony WyniesiemyTo.pl</p>
+          </div>
+          
+          <div className="space-y-12">
+            {/* Brak podstawowych dokumentów prawnych */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border-l-4 border-red-500">
+              <h3 className="text-2xl font-bold text-red-900 mb-6">Brak podstawowych dokumentów prawnych</h3>
+              <p className="text-gray-700 mb-6">
+                Strona WyniesiemyTo.pl nie posiada kluczowych dokumentów prawnych, które są obowiązkowe zgodnie z polskim prawem:
+              </p>
+              
+              <div className="space-y-6">
+                <div className="bg-red-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-bold text-red-800 mb-3">Brak polityki prywatności</h4>
+                  <p className="text-gray-700 mb-3">
+                    Jest to fundamentalny błąd prawny. Zgodnie z RODO, każda strona internetowa zbierająca dane osobowe 
+                    (w tym przez formularz kontaktowy) musi posiadać politykę prywatności zawierającą:
+                  </p>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>Dane administratora danych (nazwa firmy, adres, NIP)</li>
+                    <li>Cele przetwarzania danych osobowych</li>
+                    <li>Podstawy prawne przetwarzania</li>
+                    <li>Okres przechowywania danych</li>
+                    <li>Prawa użytkowników (dostęp, sprostowanie, usunięcie)</li>
+                    <li>Informacje o odbiorach danych</li>
+                  </ul>
+                </div>
+
+                <div className="bg-red-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-bold text-red-800 mb-3">Brak regulaminu świadczenia usług drogą elektroniczną</h4>
+                  <p className="text-gray-700">
+                    Strona musi posiadać regulamin określający zasady korzystania z serwisu, szczególnie gdy oferuje usługi online.
+                  </p>
+                </div>
+
+                <div className="bg-red-50 p-6 rounded-lg">
+                  <h4 className="text-xl font-bold text-red-800 mb-3">Brak informacji o plikach cookies</h4>
+                  <p className="text-gray-700">
+                    Zgodnie z prawem telekomunikacyjnym i nowymi wytycznymi UODO z 2025 roku, strona musi informować 
+                    o stosowanych plikach cookies oraz uzyskiwać zgodę użytkowników.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Niekompletne dane identyfikacyjne firmy */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border-l-4 border-orange-500">
+              <h3 className="text-2xl font-bold text-orange-900 mb-6">Niekompletne dane identyfikacyjne firmy</h3>
+              <p className="text-gray-700 mb-6">
+                Strona nie zawiera wszystkich wymaganych prawnie informacji o przedsiębiorcy:
+              </p>
+              
+              <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-6">
+                <li>Brak numeru NIP (obowiązkowy zgodnie z art. 21 ustawy o swobodzie działalności gospodarczej)</li>
+                <li>Brak danych dotyczących wpisu do rejestru BDO (kluczowe dla branży odpadów)</li>
+                <li>Niekompletne dane kontaktowe</li>
+                <li>Brak informacji o posiadanych licencjach i certyfikatach</li>
+              </ul>
+
+              <div className="bg-orange-50 p-6 rounded-lg">
+                <h4 className="text-xl font-bold text-orange-800 mb-3">Dane przedsiębiorców w CEIDG:</h4>
+                <div className="space-y-3">
+                  <div>
+                    <p className="font-semibold text-orange-800">Firma 1:</p>
+                    <a 
+                      href="https://aplikacja.ceidg.gov.pl/ceidg/ceidg.public.ui/SearchDetails.aspx?Id=847e7832-d875-41c1-b511-70bb9e19bf38"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline break-all"
+                    >
+                      https://aplikacja.ceidg.gov.pl/ceidg/ceidg.public.ui/SearchDetails.aspx?Id=847e7832-d875-41c1-b511-70bb9e19bf38
+                    </a>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-orange-800">Firma 2:</p>
+                    <a 
+                      href="https://aplikacja.ceidg.gov.pl/ceidg/ceidg.public.ui/SearchDetails.aspx?Id=3f99dd32-af5e-493d-8a2d-e1a07188fd98"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline break-all"
+                    >
+                      https://aplikacja.ceidg.gov.pl/ceidg/ceidg.public.ui/SearchDetails.aspx?Id=3f99dd32-af5e-493d-8a2d-e1a07188fd98
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Call to action */}
+            <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-8 rounded-xl text-center">
+              <h3 className="text-2xl font-bold mb-4">Wymaga natychmiastowej interwencji prawnej</h3>
+              <p className="text-lg mb-6">
+                Powyższe braki mogą skutkować sankcjami finansowymi oraz problemami prawnymi. 
+                Zalecamy pilne uzupełnienie wymaganych dokumentów i informacji.
+              </p>
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="bg-white text-red-600 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-300"
+              >
+                Skontaktuj się w sprawie aktualizacji prawnej
+              </button>
+            </div>
           </div>
         </div>
       </section>
